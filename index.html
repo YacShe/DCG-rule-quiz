@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Card Game Rules Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <button id="back-btn" class="back-btn">Back</button>
+
+  <main class="app">
+
+    <!-- START SCREEN -->
+    <section id="start-screen" class="screen">
+      <div class="panel start-panel">
+        <h1 id="quiz-title">Card Game Rules Trainer</h1>
+        <p id="quiz-subtitle" class="subtitle">Learn the rules by answering questions. Wrong answers just teach you the right one!</p>
+        <button id="start-btn" class="primary-btn">Start</button>
+      </div>
+    </section>
+
+    <!-- QUIZ SCREEN -->
+    <section id="quiz-screen" class="screen hidden">
+      <div class="panel question-title">
+        <h1 id="question-text"></h1>
+      </div>
+
+      <div class="panel image-box" id="image-box">
+        <img id="question-image" src="" alt="">
+        <span id="image-placeholder" class="image-placeholder">Image</span>
+
+        <div id="feedback-overlay" class="feedback-overlay hidden">
+          <h2 id="feedback-title"></h2>
+          <p id="feedback-text"></p>
+          <button id="next-btn" class="secondary-btn hidden">Next question</button>
+          <p id="retry-text" class="retry-text hidden">Try a different answer</p>
+        </div>
+      </div>
+
+      <div class="answers-grid" id="answers-grid"></div>
+    </section>
+
+    <!-- COMPLETE SCREEN -->
+    <section id="complete-screen" class="screen hidden">
+      <div class="panel start-panel">
+        <h1>You've completed all the questions!</h1>
+        <p class="subtitle">Great job learning the rules. Want to go through them again?</p>
+        <button id="restart-btn" class="primary-btn">Restart</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
