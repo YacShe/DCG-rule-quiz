@@ -23,7 +23,17 @@ const nextBtn = document.getElementById('next-btn');
 const retryText = document.getElementById('retry-text');
 
 let currentIndex = 0;
-let answeredCorrectly = false;
+let questionSolved = false;
+let quizQuestions = QUESTIONS;
+
+function shuffle(array) {
+  const result = array.slice();
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
 
 function showScreen(screen) {
   [startScreen, quizScreen, completeScreen].forEach(s => s.classList.add('hidden'));
@@ -31,8 +41,8 @@ function showScreen(screen) {
 }
 
 function loadQuestion(index) {
-  answeredCorrectly = false;
-  const question = QUESTIONS[index];
+  questionSolved = false;
+  const question = quizQuestions[index];
 
   questionText.textContent = question.text;
 
@@ -67,9 +77,7 @@ function loadQuestion(index) {
 }
 
 function selectAnswer(button, answer) {
-  if (answeredCorrectly) return;
-
-  // Clear any previous selection highlight.
+  // Clear any previous selection highlight so only the latest pick is shown.
   answersGrid.querySelectorAll('.answer-btn').forEach(btn => {
     btn.classList.remove('correct', 'incorrect');
   });
@@ -78,42 +86,40 @@ function selectAnswer(button, answer) {
   feedbackText.textContent = answer.explanation;
 
   if (answer.correct) {
-    answeredCorrectly = true;
+    questionSolved = true;
     button.classList.add('correct');
     feedbackOverlay.classList.add('correct');
     feedbackTitle.textContent = 'Correct!';
-    nextBtn.classList.remove('hidden');
-    retryText.classList.add('hidden');
-    answersGrid.querySelectorAll('.answer-btn').forEach(btn => btn.disabled = true);
   } else {
     button.classList.add('incorrect');
     feedbackOverlay.classList.add('incorrect');
     feedbackTitle.textContent = 'Incorrect..';
-    nextBtn.classList.add('hidden');
-    retryText.classList.remove('hidden');
   }
+
+  // Once solved, keep letting the user explore other answers and always offer to move on.
+  nextBtn.classList.toggle('hidden', !questionSolved);
+  retryText.classList.toggle('hidden', questionSolved);
 }
 
 function goToNextQuestion() {
   currentIndex++;
-  if (currentIndex >= QUESTIONS.length) {
+  if (currentIndex >= quizQuestions.length) {
     showScreen(completeScreen);
   } else {
     loadQuestion(currentIndex);
   }
 }
 
-startBtn.addEventListener('click', () => {
+function startQuiz() {
+  quizQuestions = shuffle(QUESTIONS);
   currentIndex = 0;
   loadQuestion(currentIndex);
   showScreen(quizScreen);
-});
+}
 
-restartBtn.addEventListener('click', () => {
-  currentIndex = 0;
-  loadQuestion(currentIndex);
-  showScreen(quizScreen);
-});
+startBtn.addEventListener('click', startQuiz);
+
+restartBtn.addEventListener('click', startQuiz);
 
 backBtn.addEventListener('click', () => {
   showScreen(startScreen);
