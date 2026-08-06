@@ -63,6 +63,7 @@ body {
   align-items:center;
   gap:6px;
   background: var(--card-bg);
+  border: var(--card-border);
 }
 
 .back-btn:hover {
@@ -73,7 +74,7 @@ body {
 
 .app {
   height: 100vh;
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 3vh 3vw 3vh;
   display: flex;
@@ -108,6 +109,7 @@ body {
   box-shadow: var(--panel-shadow);
   max-width: 886px;
   background: var(--card-bg);
+  border: var(--card-border);
 }
 
 .start-image {
@@ -245,10 +247,16 @@ body {
 }
 
 .retry-text {
-  font-size: 24px;
-  font-style:italic;
+  font-family: inherit;
+  font-size: 1em;
+  font-style: italic;
   font-weight: 500;
   margin: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  cursor: default;
 }
 
 /* ---------- Answers grid ---------- */
@@ -305,5 +313,37 @@ body {
   .back-btn {
   position: fixed;
   top: 1vh;
+  padding: 1vh 1.5vw;
 }
+
+  /* Overlay expands to cover the answers too (sized/positioned by app.js) so
+     answers stay reachable only after closing it via the retry button. */
+  .feedback-overlay {
+    position: fixed;
+    inset: auto;
+    margin: 0;
+    width: auto;
+    max-width: none;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+  }
+
+  .retry-text {
+    font-style: normal;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 1.2vh 2.8vw;
+    border: var(--card-border);
+    border-radius: var(--card-radius);
+    background: #ffffff;
+    cursor: pointer;
+  }
+
+  .retry-text:hover {
+    background: var(--color-hover);
+  }
 }

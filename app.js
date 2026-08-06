@@ -20,7 +20,16 @@ const feedbackOverlay = document.getElementById('feedback-overlay');
 const feedbackTitle = document.getElementById('feedback-title');
 const feedbackText = document.getElementById('feedback-text');
 const nextBtn = document.getElementById('next-btn');
-const retryText = document.getElementById('retry-text');
+const retryBtn = document.getElementById('retry-btn');
+const imageBox = document.getElementById('image-box');
+
+const MOBILE_BREAKPOINT = 600;
+
+// Lets question/answer text use **bold** (like Markdown) without allowing raw HTML.
+function renderRichText(el, text) {
+  const escaped = text.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  el.innerHTML = escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
 
 let currentIndex = 0;
 let questionSolved = false;
@@ -44,12 +53,13 @@ function loadQuestion(index) {
   questionSolved = false;
   const question = quizQuestions[index];
 
-  questionText.textContent = question.text;
+  renderRichText(questionText, question.text);
 
   feedbackOverlay.classList.add('hidden');
   feedbackOverlay.classList.remove('correct', 'incorrect');
+  feedbackOverlay.removeAttribute('style');
   nextBtn.classList.add('hidden');
-  retryText.classList.add('hidden');
+  retryBtn.classList.add('hidden');
 
   if (question.image) {
     questionImage.src = question.image;
@@ -76,6 +86,22 @@ function loadQuestion(index) {
   });
 }
 
+// On mobile, the overlay grows to cover the answers too, so it needs to be
+// sized/positioned in JS to match the combined area of the image and answers.
+function positionFeedbackOverlay() {
+  if (window.innerWidth > MOBILE_BREAKPOINT) return;
+  const imageRect = imageBox.getBoundingClientRect();
+  const gridRect = answersGrid.getBoundingClientRect();
+  feedbackOverlay.style.top = `${imageRect.top}px`;
+  feedbackOverlay.style.left = `${imageRect.left}px`;
+  feedbackOverlay.style.width = `${imageRect.width}px`;
+  feedbackOverlay.style.height = `${gridRect.bottom - imageRect.top}px`;
+}
+
+window.addEventListener('resize', () => {
+  if (!feedbackOverlay.classList.contains('hidden')) positionFeedbackOverlay();
+});
+
 function selectAnswer(button, answer) {
   // Clear any previous selection highlight so only the latest pick is shown.
   answersGrid.querySelectorAll('.answer-btn').forEach(btn => {
@@ -83,7 +109,8 @@ function selectAnswer(button, answer) {
   });
 
   feedbackOverlay.classList.remove('hidden', 'correct', 'incorrect');
-  feedbackText.textContent = answer.explanation;
+  renderRichText(feedbackText, answer.explanation);
+  positionFeedbackOverlay();
 
   if (answer.correct) {
     questionSolved = true;
@@ -98,8 +125,12 @@ function selectAnswer(button, answer) {
 
   // Once solved, keep letting the user explore other answers and always offer to move on.
   nextBtn.classList.toggle('hidden', !questionSolved);
-  retryText.classList.toggle('hidden', questionSolved);
+  retryBtn.classList.toggle('hidden', questionSolved);
 }
+
+retryBtn.addEventListener('click', () => {
+  feedbackOverlay.classList.add('hidden');
+});
 
 function goToNextQuestion() {
   currentIndex++;
